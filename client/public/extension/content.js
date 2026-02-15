@@ -340,11 +340,8 @@ function toggleSidebar() {
 function createFabButton() {
   fabButton = document.createElement('div');
   fabButton.id = 'spoilerguard-fab';
-  fabButton.innerHTML = `
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-    </svg>
-  `;
+  const logoUrl = chrome.runtime.getURL('icon128.png');
+  fabButton.innerHTML = `<img src="${logoUrl}" width="32" height="32" style="border-radius:50%;" />`;
   fabButton.style.cssText = `
     position: fixed; right: 24px; top: 50%; transform: translateY(-50%);
     width: 48px; height: 48px; border-radius: 50%;

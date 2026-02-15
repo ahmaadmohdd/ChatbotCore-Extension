@@ -3,6 +3,11 @@
   "name": "Spoiler Guard",
   "version": "1.4",
   "description": "Live RAG companion for streaming sites that prevents spoilers. Supports Disney+, Netflix, and manual mode for any site.",
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  },
   "permissions": [
     "activeTab",
     "scripting",
@@ -19,7 +24,12 @@
   },
   "action": {
     "default_title": "Spoiler Guard Settings",
-    "default_popup": "popup.html"
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icon16.png",
+      "48": "icon48.png",
+      "128": "icon128.png"
+    }
   },
   "content_scripts": [
     {
@@ -29,7 +39,7 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": ["sidebar.html", "sidebar.js"],
+      "resources": ["sidebar.html", "sidebar.js", "icon.png", "icon16.png", "icon48.png", "icon128.png"],
       "matches": ["*://*.disneyplus.com/*", "*://*.netflix.com/*", "<all_urls>"]
     }
   ]

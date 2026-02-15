@@ -66,15 +66,12 @@
       border-bottom: 1px solid rgba(255,255,255,0.08);
       flex-shrink: 0;
     }
-    .cs-header-icon {
+    .cs-header-logo {
       width: 36px; height: 36px;
-      background: linear-gradient(135deg, #3b82f6, #06b6d4);
-      border-radius: 10px;
-      display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 4px 12px rgba(59,130,246,0.2);
+      border-radius: 50%;
       flex-shrink: 0;
+      object-fit: cover;
     }
-    .cs-header-icon svg { width: 20px; height: 20px; }
     .cs-header-title { font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 16px; color: #fff; white-space: nowrap; }
     .cs-header-subtitle { font-size: 11px; color: rgba(147,197,253,0.6); white-space: nowrap; }
     .cs-close-btn {
@@ -559,13 +556,7 @@
     <!-- LEFT: Content Sidebar -->
     <aside class="content-sidebar" id="content-sidebar">
       <div class="cs-header">
-        <div class="cs-header-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/>
-            <line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/>
-            <line x1="2" y1="12" x2="22" y2="12"/><line x1="2" y1="7" x2="22" y2="7"/><line x1="2" y1="17" x2="22" y2="17"/>
-          </svg>
-        </div>
+        <img class="cs-header-logo" src="icon128.png" alt="SpoilerGuard" />
         <div style="overflow:hidden; flex:1;">
           <div class="cs-header-title">SpoilerGuard</div>
           <div class="cs-header-subtitle">Streaming Companion</div>
