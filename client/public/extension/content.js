@@ -21,6 +21,7 @@ function detectSite() {
   const host = window.location.hostname;
   if (host.includes('disneyplus.com')) return 'disney';
   if (host.includes('netflix.com')) return 'netflix';
+  if (host.includes('hulu.com')) return 'hulu';
   return 'generic';
 }
 

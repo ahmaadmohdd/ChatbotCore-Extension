@@ -90,11 +90,12 @@ class RAGSystem:
 
     def register_content(self, content_id: str, universe: str, content_type: str,
                          title: str, season: int, episode: int,
-                         item_title: str, max_ts: int):
+                         item_title: str, max_ts: int, platform: str = "generic"):
         """Register a content item (movie or series episode) in the registry."""
         if content_id not in self.content_registry:
             self.content_registry[content_id] = {
                 "universe": universe,
+                "platform": platform,
                 "type": content_type,
                 "title": title,
                 "items": []
@@ -204,20 +205,20 @@ class RAGSystem:
 
     def get_content(self) -> list:
         """Return all universes with their content for the /api/content endpoint."""
-        universes: Dict[str, list] = {}
+        universes: Dict[str, dict] = {}
         for content_id, reg in self.content_registry.items():
             universe_name = reg["universe"]
             if universe_name not in universes:
-                universes[universe_name] = []
-            universes[universe_name].append({
+                universes[universe_name] = {"platform": reg.get("platform", "generic"), "content": []}
+            universes[universe_name]["content"].append({
                 "content_id": content_id,
                 "type": reg["type"],
                 "title": reg["title"],
                 "items": sorted(reg["items"], key=lambda i: (i["season"], i["episode"]))
             })
         return [
-            {"name": name, "content": content_list}
-            for name, content_list in sorted(universes.items())
+            {"name": name, "platform": data["platform"], "content": data["content"]}
+            for name, data in sorted(universes.items())
         ]
 
     def get_movies(self) -> list:

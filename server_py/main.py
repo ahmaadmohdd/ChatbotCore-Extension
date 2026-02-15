@@ -11,12 +11,18 @@ from .rag import rag_system
 ALLOWED_ORIGIN_PATTERNS = [
     re.compile(r"^https://.*\.disneyplus\.com$"),
     re.compile(r"^https://.*\.netflix\.com$"),
+    re.compile(r"^https://.*\.hulu\.com$"),
     re.compile(r"^http://localhost"),
     re.compile(r"^chrome-extension://"),
 ]
 
 SE_PATTERN = re.compile(r'S(\d+)E(\d+)|(\d+)x(\d+)', re.IGNORECASE)
 YEAR_PATTERN = re.compile(r'(\d{4})')
+
+PLATFORM_MAP = {
+    'Marvel': 'disney',
+    'Hulu': 'disney',
+}
 
 
 def _read_file(filepath: str) -> str:
@@ -78,7 +84,8 @@ async def seed_data():
     for universe_raw, universe_path in universe_dirs:
         universe_name = universe_raw.replace("_", " ")
         universe_slug = _slugify(universe_raw)
-        print(f"[Seed] Scanning universe: {universe_name}")
+        platform = PLATFORM_MAP.get(universe_raw, 'generic')
+        print(f"[Seed] Scanning universe: {universe_name} (platform: {platform})")
 
         # Collect flat SRT files and subfolders
         flat_movies = []       # flat SRTs without S##E## → movies
@@ -117,7 +124,8 @@ async def seed_data():
                         season=1,
                         episode=ep_num,
                         item_title=title,
-                        max_ts=max_ts
+                        max_ts=max_ts,
+                        platform=platform
                     )
                     print(f"[Seed]   Movie {ep_num}: {title} - {count} segments")
                 except Exception as e:
@@ -141,7 +149,8 @@ async def seed_data():
                         season=s,
                         episode=e,
                         item_title=title or f"S{s:02d}E{e:02d}",
-                        max_ts=max_ts
+                        max_ts=max_ts,
+                        platform=platform
                     )
                     print(f"[Seed]   {universe_name} S{s:02d}E{e:02d}: {title} - {count} segments")
                 except Exception as e_err:
@@ -181,7 +190,8 @@ async def seed_data():
                         season=s,
                         episode=e,
                         item_title=title or f"S{s:02d}E{e:02d}",
-                        max_ts=max_ts
+                        max_ts=max_ts,
+                        platform=platform
                     )
                     print(f"[Seed]   {series_title} S{s:02d}E{e:02d}: {title} - {count} segments")
                 except Exception as e_err:

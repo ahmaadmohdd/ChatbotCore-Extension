@@ -296,12 +296,15 @@ chrome.storage.local.get(['backendUrl', 'currentContext'], (result) => {
 chrome.storage.onChanged.addListener((changes) => {
   if (changes.backendUrl?.newValue) backendUrl = changes.backendUrl.newValue;
   if (changes.currentContext?.newValue) {
-    const prev = ctx.title;
+    const prevTitle = ctx.title;
+    const prevSite = ctx.site;
     ctx = { ...ctx, ...changes.currentContext.newValue };
     updateContextBar();
     updateNowPlaying();
     updateSiteBadge();
-    if (ctx.title && ctx.title !== prev && contentData) {
+    if (ctx.site !== prevSite && contentData) {
+      applyPlatformFilter();
+    } else if (ctx.title && ctx.title !== prevTitle && contentData) {
       resolveContentId();
       renderContentList();
     }
@@ -374,6 +377,14 @@ function updateSortToggleVisibility() {
 }
 
 // ---- Fetch content from backend ----
+function getFilteredUniverses() {
+  if (!contentData) return [];
+  const all = contentData.universes || [];
+  const site = ctx.site || '';
+  if (site === 'generic' || !site) return [];
+  return all.filter(u => u.platform === site);
+}
+
 async function fetchContent() {
   try {
     const res = await fetch(`${backendUrl}/api/content`);
@@ -382,26 +393,34 @@ async function fetchContent() {
       return;
     }
     contentData = await res.json();
-    const universes = contentData.universes || [];
-
-    // Auto-select first universe
-    if (!selectedUniverse && universes.length > 0) {
-      selectedUniverse = universes[0].name;
-    }
-
-    // Always show universe selector
-    universeSection.classList.add('visible');
-
-    universeBtnText.textContent = selectedUniverse || 'Select...';
-    renderUniverseDropdown();
-    updateSortToggleVisibility();
-    initEnabledItems();
-    resolveContentId();
-    renderContentList();
-    updateNowPlaying();
+    applyPlatformFilter();
   } catch (e) {
     contentListEl.innerHTML = '<div class="cs-empty">Could not reach backend</div>';
   }
+}
+
+function applyPlatformFilter() {
+  const universes = getFilteredUniverses();
+
+  if (universes.length === 0) {
+    selectedUniverse = '';
+    universeSection.classList.remove('visible');
+    contentListEl.innerHTML = '<div class="cs-empty">Open a streaming site to browse content</div>';
+    return;
+  }
+
+  if (!selectedUniverse || !universes.find(u => u.name === selectedUniverse)) {
+    selectedUniverse = universes[0].name;
+  }
+
+  universeSection.classList.toggle('visible', universes.length > 1);
+  universeBtnText.textContent = selectedUniverse || 'Select...';
+  renderUniverseDropdown();
+  updateSortToggleVisibility();
+  initEnabledItems();
+  resolveContentId();
+  renderContentList();
+  updateNowPlaying();
 }
 
 // ---- Reload knowledge base ----
@@ -417,7 +436,7 @@ reloadBtn.addEventListener('click', async () => {
 // ---- Render universe dropdown options ----
 function renderUniverseDropdown() {
   if (!contentData) return;
-  const universes = contentData.universes || [];
+  const universes = getFilteredUniverses();
   universeDropdown.innerHTML = '';
   for (const u of universes) {
     const btn = document.createElement('button');

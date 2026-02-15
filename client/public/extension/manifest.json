@@ -17,6 +17,7 @@
   "host_permissions": [
     "*://*.disneyplus.com/*",
     "*://*.netflix.com/*",
+    "*://*.hulu.com/*",
     "http://localhost:5000/*"
   ],
   "background": {
@@ -33,7 +34,7 @@
   },
   "content_scripts": [
     {
-      "matches": ["*://*.disneyplus.com/*", "*://*.netflix.com/*"],
+      "matches": ["*://*.disneyplus.com/*", "*://*.netflix.com/*", "*://*.hulu.com/*"],
       "js": ["content.js"]
     }
   ],
